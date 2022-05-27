@@ -11,5 +11,6 @@
         "No License"
     ],
     "package_name": "{{ cookiecutter.project_name.lower().replace(' ', '-') }}",
-    "import_name": "{{ cookiecutter.package_name.lower().replace('-', '_') }}"
+    "import_name": "{{ cookiecutter.package_name.lower().replace('-', '_') }}",
+    "port": "8080"
 }
