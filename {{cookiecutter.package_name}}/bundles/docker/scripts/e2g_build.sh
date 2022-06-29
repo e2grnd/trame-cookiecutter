@@ -1,8 +1,8 @@
 CURRENT_DIR=`dirname "$0"`
-PS3='Please select a base image: '
-images=("kitware/trame" "kitware/trame:glvnd")
-select image in "${images[@]}"; do
-    selected_image=$image
+PS3='Does the targe machine have an NVIDIA GPU?: '
+options=("yes" "no")
+select option in "${options[@]}"; do
+    gpu_support=$option
     break
 done
 
@@ -17,16 +17,16 @@ docker run --rm          \
     -e TRAME_BUILD_ONLY=1 \
     -v "$DEPLOY_DIR:/deploy" \
     -v "$ROOT_DIR:/local-app"  \
-    $selected_image
+    kitware/trame:glvnd
 
-if [ "$selected_image" == "kitware/trame" ]; then
+if [ "$gpu_support" == "no" ]; then
     docker_file=Dockerfile
-    tag=""
+    tag=":osmesa"
 else
     docker_file=Dockerfile.glvnd
-    tag=":glvnd"
+    tag=":egl"
 fi
 
 cd $CURRENT_DIR/..
-docker build -f docker_file -t {{cookiecutter.package_name}}$tag .
+docker build -f $docker_file -t {{cookiecutter.package_name}}$tag .
 cd -
