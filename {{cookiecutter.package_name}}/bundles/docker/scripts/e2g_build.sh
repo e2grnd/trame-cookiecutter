@@ -23,7 +23,7 @@ if [ "$gpu_support" == "no" ]; then
     docker_file=Dockerfile
     tag=":osmesa"
 else
-    docker_file=Dockerfile.glvnd
+    docker_file=Dockerfile.egl
     tag=":egl"
 fi
 
