@@ -3,6 +3,34 @@ trame: # Default app under /index.html
   www_modules:
     - {{cookiecutter.import_name}}.module
 {%- endif %}
-  app: {{cookiecutter.entry_point}}
+  cmd:
+    - /opt/paraview/bin/pvpython
+    - -m
+    - paraview.apps.trame
+    - --trame-app
+    - {{cookiecutter.import_name}}
+    - --data
+    - /data
+    - --host
+    - ${host}
+    - --port
+    - ${port}
+    - --authKey
+    - ${secret}
+    - --server
 {{cookiecutter.package_name}}: # /{{cookiecutter.package_name}}.html
-  app: {{cookiecutter.entry_point}}
+  cmd:
+    - /opt/paraview/bin/pvpython
+    - -m
+    - paraview.apps.trame
+    - --trame-app
+    - {{cookiecutter.import_name}}
+    - --data
+    - ${data} # <-- come from url(data=...)
+    - --host
+    - ${host}
+    - --port
+    - ${port}
+    - --authKey
+    - ${secret}
+    - --server
