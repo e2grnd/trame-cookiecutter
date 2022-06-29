@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-docker run -it --rm -p 8080:80 {{cookiecutter.entry_point}}
+docker run -it --rm -p 8080:80 trame-app

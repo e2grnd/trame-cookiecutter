@@ -10,8 +10,8 @@ cd $CURRENT_DIR/../../..
 ROOT_DIR=$PWD
 popd
 
-docker run -it --rm --gpus all\
+docker run --rm          \
     -e TRAME_BUILD_ONLY=1 \
     -v "$DEPLOY_DIR:/deploy" \
     -v "$ROOT_DIR:/local-app"  \
-    e2grnd/trame:glvnd
+    kitware/trame

@@ -4,5 +4,5 @@ CURRENT_DIR=`dirname "$0"`
 . $CURRENT_DIR/build_server.sh
 
 cd $CURRENT_DIR/..
-docker build -t {{cookiecutter.entry_point}} .
+docker build -t trame-app .
 cd -

@@ -8,8 +8,7 @@ cd $CURRENT_DIR/..
 DEPLOY_DIR=$PWD
 popd
 
-docker run -it --rm --gpus all \
-    -p {{cookiecutter.port}}:80 \
+docker run -it --rm \
+    -p 8080:80 \
     -v "$DEPLOY_DIR:/deploy" \
-    -d \
-    e2grnd/trame:glvnd
+    kitware/trame
