@@ -1,5 +1,5 @@
 CURRENT_DIR=`dirname "$0"`
-PS3='Does the targe machine have an NVIDIA GPU?: '
+PS3='Does the target machine have an NVIDIA GPU?: '
 options=("yes" "no")
 select option in "${options[@]}"; do
     gpu_support=$option
