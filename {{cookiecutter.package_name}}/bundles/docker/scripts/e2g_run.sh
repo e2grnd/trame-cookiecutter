@@ -14,4 +14,6 @@ else
     tag=":egl"
 fi
 
-docker run -it --rm $gpu_arg -p 8080:80 -d {{cookiecutter.package_name}}$tag
+docker run -it --rm $gpu_arg -p 8080:80 \
+    -e STORAGE_API_SERVICE_HOST=10.128.0.31 \
+    -d visualization$tag
