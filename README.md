@@ -20,5 +20,5 @@ cookiecutter gh:kitware/trame-cookiecutter -c v1
 ## Trame v2
 
 ```bash
-cookiecutter gh:kitware/trame-cookiecutter
+cookiecutter gh:e2grnd/trame-cookiecutter -c chore/e2g-custom
 ```
