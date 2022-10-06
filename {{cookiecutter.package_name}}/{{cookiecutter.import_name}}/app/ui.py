@@ -24,7 +24,7 @@ def initialize(server, renderWindow, default_resolution):
             change=(ctrl.get_href, "[window.location.href]"),
             trigger_on_create=True,
         )
-        layout.title.set_text("TBreak")
+        layout.title.set_text("Trame")
         with layout.toolbar:
             vuetify.VSpacer()
             vuetify.VDivider(vertical=True, classes="mx-2")
