@@ -1,8 +1,7 @@
 from urllib.parse import parse_qs, urlparse
 
-from paraview.web import venv
-from trame.app import get_server
 import vtkmodules.vtkRenderingOpenGL2  # noqa
+from paraview.web import venv  # type: ignore # noqa
 from trame.app import get_server
 from vtkmodules.vtkInteractionStyle import vtkInteractorStyleSwitch  # noqa
 from vtkmodules.vtkRenderingCore import (
@@ -53,7 +52,7 @@ def main():
     def render():
         if state.job_id is not None:
             value = download(state.job_id)
-            rv = RenderView(renderer, value[0])
+            rv = RenderView(renderer, value)
             engine.initialize(server, rv, default_resolution)
             ctrl.view_update()
             ctrl.view_reset_camera()
@@ -64,3 +63,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
