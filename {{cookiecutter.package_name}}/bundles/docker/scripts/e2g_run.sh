@@ -17,5 +17,6 @@ fi
 docker run -name {{cookiecutter.package_name}} $gpu_arg -p {{cookiecutter.port}}:80 \
     -e STORAGE_API_SERVICE_HOST \
     -e INTERNAL_AUTH_SHARED_SECRET \
+    -e BUCKET_FOLDER \
     --restart=always \
-    -d vis-{{cookiecutter.package_name}}$tag
+    -d {{cookiecutter.package_name}}$tag
