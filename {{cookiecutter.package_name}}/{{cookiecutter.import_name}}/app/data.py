@@ -5,7 +5,7 @@ import requests
 
 def download(job_id):
 
-    storage_host = os.environ.get("STORAGE_API_SERVICE_HOST", "storage")
+    storage_host = os.environ.get("STORAGE_API_SERVICE_HOST", "storage-trame")
     storage_port = os.environ.get("STORAGE_API_SERVICE_PORT", "8070")
     bucket_folder = os.environ.get("BUCKET_FOLDER", "trame")
     url = f"http://{storage_host}:{storage_port}/internal/download?name={bucket_folder}/{{cookiecutter.package_name}}/{job_id}.json"
