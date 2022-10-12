@@ -28,5 +28,5 @@ else
 fi
 
 cd $CURRENT_DIR/..
-docker build -f $docker_file -t vis-{{cookiecutter.package_name}}$tag .
+docker build -f $docker_file -t {{cookiecutter.package_name}}$tag .
 cd -

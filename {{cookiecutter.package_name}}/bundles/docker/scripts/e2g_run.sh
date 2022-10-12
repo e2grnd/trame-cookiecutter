@@ -14,8 +14,8 @@ else
     tag=":egl"
 fi
 
-docker run $gpu_arg -p 8080:80 \
-    -e STORAGE_API_SERVICE_HOST=10.128.0.31 \
+docker run -name {{cookiecutter.package_name}} $gpu_arg -p {{cookiecutter.port}}:80 \
+    -e STORAGE_API_SERVICE_HOST \
     -e INTERNAL_AUTH_SHARED_SECRET \
     --restart=always \
     -d vis-{{cookiecutter.package_name}}$tag
