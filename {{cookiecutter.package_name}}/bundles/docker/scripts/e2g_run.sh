@@ -14,7 +14,7 @@ else
     tag=":egl"
 fi
 
-docker run -name {{cookiecutter.package_name}} $gpu_arg -p {{cookiecutter.port}}:80 \
+docker run --name {{cookiecutter.package_name}} $gpu_arg -p {{cookiecutter.port}}:80 \
     -e STORAGE_API_SERVICE_HOST \
     -e INTERNAL_AUTH_SHARED_SECRET \
     -e BUCKET_FOLDER \
