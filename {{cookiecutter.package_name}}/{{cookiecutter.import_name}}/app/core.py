@@ -2,9 +2,16 @@ r"""
 Define your classes and create the instances that you need to expose
 """
 import logging
+from urllib.parse import parse_qs, urlparse
 from trame.app import get_server
-from trame.ui.vuetify import SinglePageLayout
-from trame.widgets import vuetify, vtk
+from vtkmodules.vtkInteractionStyle import vtkInteractorStyleSwitch #noqa
+import vtkmodules.vtkRenderingOpenGL2 #noqa
+from paraview import simple # type: ignore # noqa
+
+from .render_view import RenderView
+from . import engine, ui
+from .data import download
+
 {%- if cookiecutter.include_components %}
 from {{cookiecutter.import_name}}.widgets import {{cookiecutter.import_name}} as my_widgets
 {%- endif %}
@@ -25,24 +32,32 @@ class Engine:
             server = get_server()
 
         self._server = server
+        self._renderView = simple.GetActiveViewOrCreate("RenderView")
+        self._renderView.MakeRenderWindowInteractor(True)
 
         # initialize state + controller
         state, ctrl = server.state, server.controller
+        state.update(
+            {
+                "job_id": None,
+            }
+        )
 
         # Set state variable
         state.trame__title = "{{cookiecutter.project_name}}"
-        state.resolution = 6
+        state.timeDependence = "Transient"
 
         # Bind instance methods to controller
-        ctrl.reset_resolution = self.reset_resolution
         ctrl.on_server_reload = self.ui
+        ctrl.get_href = self.get_href
+        ctrl.render = self.render
 {%- if cookiecutter.include_components %}
         ctrl.widget_click = self.widget_click
         ctrl.widget_change = self.widget_change
 {%- endif %}
 
         # Bind instance methods to state change
-        state.change("resolution")(self.on_resolution_change)
+        state.change("job_id")(self.reload)
 
         # Generate UI
         self.ui()
@@ -66,12 +81,6 @@ class Engine:
         jupyter.show(self.server, **kwargs)
 
 
-    def reset_resolution(self):
-        self._server.state.resolution = 6
-
-    def on_resolution_change(self, resolution, **kwargs):
-        logger.info(f">>> ENGINE(a): Slider updating resolution to {resolution}")
-
 {%- if cookiecutter.include_components %}
 
     def widget_click(self):
@@ -83,44 +92,42 @@ class Engine:
 {%- endif %}
 
     def ui(self, *args, **kwargs):
-        with SinglePageLayout(self._server) as layout:
-            # Toolbar
-            layout.title.set_text("Trame / vtk.js")
-            with layout.toolbar:
-                vuetify.VSpacer()
-{%- if cookiecutter.include_components %}
-                my_widgets.CustomWidget(
-                    attribute_name="Hello",
-                    py_attr_name="World",
-                    click=self.ctrl.widget_click,
-                    change=self.ctrl.widget_change,
-                )
-                vuetify.VSpacer()
-{%- endif %}
-                vuetify.VSlider(                    # Add slider
-                    v_model=("resolution", 6),      # bind variable with an initial value of 6
-                    min=3, max=60,                  # slider range
-                    dense=True, hide_details=True,  # presentation setup
-                )
-                with vuetify.VBtn(icon=True, click=self.ctrl.reset_camera):
-                    vuetify.VIcon("mdi-crop-free")
-                with vuetify.VBtn(icon=True, click=self.ctrl.reset_resolution):
-                    vuetify.VIcon("mdi-undo")
+        ui.initialize(self._server, self._renderView, self.state.timeDependence)
 
-            # Main content
-            with layout.content:
-                with vuetify.VContainer(fluid=True, classes="pa-0 fill-height"):
-                    with vtk.VtkView() as vtk_view:                # vtk.js view for local rendering
-                        self.ctrl.reset_camera = vtk_view.reset_camera  # Bind method to controller
-                        with vtk.VtkGeometryRepresentation():      # Add representation to vtk.js view
-                            vtk.VtkAlgorithm(                      # Add ConeSource to representation
-                                vtk_class="vtkConeSource",          # Set attribute value with no JS eval
-                                state=("{ resolution }",)          # Set attribute value with JS eval
-                            )
+    def get_href(self, href):
+        parsed_path = urlparse(href)
+        qs = parse_qs(parsed_path.query)
+        if "job_id" in qs and qs["job_id"] is not None:
+            job_id = qs["job_id"][0]
+            self.state.job_id = job_id
 
-            # Footer
-            # layout.footer.hide()
+    async def reload(self, job_id, **kwargs):
+        self.ctrl.view_update()
+        await self.ctrl.render()
+        self._renderView.ResetCamera(False)
+        if self.state.flag2D == "2D":
+            self._renderView.InteractionMode = "2D"
 
+    async def render(self):
+        if self.state.job_id is not None:
+            fileData = await download(self.state.job_id)
+            rv = RenderView(fileData)
+            self.state.timeDependence = rv.dataType
+            animation_scene = simple.GetAnimationScene()
+            animation_scene.UpdateAnimationUsingDataTimeSteps()
+            time_keeper = animation_scene.TimeKeeper
+            time_values = list(time_keeper.TimestepValues)
+            engine.initialize(self.server, rv, time_values, self.state.timeDependence, time_keeper)
+            self.state.time_value = round(time_values[0], 6)
+            self.state.times = len(time_values) - 1
+            self.state.fields = rv.fields
+            self.state.trame__title = "Hottap"
+            self.state.flag2D = rv.flag2D
+            self.ctrl.view_update()
+            self._renderView.ResetCamera(False)
+            config_camZoom = 100 / 8  # 100/8
+            cam = simple.GetActiveCamera()
+            cam.Dolly(config_camZoom)
 
 def create_engine(server=None):
     # Get or create server
@@ -131,3 +138,4 @@ def create_engine(server=None):
         server = get_server(server)
 
     return Engine(server)
+

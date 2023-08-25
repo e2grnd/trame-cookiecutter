@@ -1,3 +1,5 @@
-from trame_client.utils.version import get_version
+from .app import main
 
-__version__ = get_version("{{ cookiecutter.package_name }}")
+__all__ = [
+    "main",
+]

@@ -1,3 +1,5 @@
+from paraview.web import venv  # type: ignore # noqa
+
 from .core import create_engine
 
 def main(server=None, **kwargs):
