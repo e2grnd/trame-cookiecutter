@@ -20,4 +20,4 @@ docker run --name {{cookiecutter.entry_point}} $gpu_arg -p {{cookiecutter.port}}
     -e INTERNAL_AUTH_SHARED_SECRET \
     -e BUCKET_FOLDER \
     --restart=always \
-    -d gcr.io/sandbox-225221/trame/$name:latest
+    -d gcr.io/sandbox-225221/$name/trame:latest

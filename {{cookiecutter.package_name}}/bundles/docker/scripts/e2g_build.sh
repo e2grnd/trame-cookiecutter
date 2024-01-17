@@ -31,6 +31,6 @@ fi
 
 hash=$(git rev-parse release/dev)
 cd $CURRENT_DIR/..
-docker build -f $docker_file -t gcr.io/sandbox-225221/trame/$name:$hash -t gcr.io/sandbox-225221/trame/$name:latest .
-docker push gcr.io/sandbox-225221/trame/$name -a
+docker build -f $docker_file -t gcr.io/sandbox-225221/$name/trame:$hash -t gcr.io/sandbox-225221/$name/trame:latest .
+# docker push gcr.io/sandbox-225221/trame/$name -a
 cd -
